@@ -44,6 +44,17 @@ app.get("/api/product", async (req, res) => {
   res.render("product/create")
 })
 
+app.post("/product/post", async (req, res) => {
+  const { name, price, stock } = req.body
+  await product.create({
+    name,
+    price,
+    stock
+  })
+
+  res.redirect("/product")
+})
+
 app.get("/update/product/:id", async (req, res) => {
   // const data = await product.findAll()
   const id = req.params.id
@@ -65,11 +76,19 @@ app.post("/product/update/:id", async (req, res) => {
       id
     }
   })
+  
+  res.redirect("/product")
+})
 
-  res.status(200).json({
-    status: 'success',
-    message: `Data dengan index ${id} telah berhasil terupdate`
+app.get("/product/delete/:id", async (req, res) => {
+  const id = req.params.id
+  await product.destroy({
+    where: {
+      id
+    }
   })
+
+  res.redirect("/product")
 })
 
 app.use(routes)

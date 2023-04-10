@@ -9,10 +9,20 @@
   <link rel="stylesheet" href="../style.css">
 </head>
 
+<style>
+  th,
+  td {
+    text-align: center;
+  }
+</style>
+
 <body>
 
   <div>
-    <h1>ID</h1>
+    <h1>List product</h1>
+    <a href="/api/product">
+      <button>Add Product</button>
+    </a>
     <table>
       <tr>
         <th>id</th>
@@ -35,8 +45,13 @@
           <td>
             <%= product.stock %>
           </td>
-          <td>
-            <a href="/update/product/<%= product.id %>">Update</a>
+          <td style="display: flex;justify-content: center;gap: 10px;">
+            <a href="/update/product/<%= product.id %>">
+              <button>Update</button>
+            </a>
+            <a href="/product/delete/<%= product.id %>">
+              <button>Delete</button>
+            </a>
           </td>
         </tr>
         <% }) %>

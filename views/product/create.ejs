@@ -1,39 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tambah data</title>
+  <link rel="stylesheet" href="../style.css">
 </head>
 <style>
+  body {
+    width: 100vw;
+    height: 100vh;
+  }
   form {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    justify-content: center;
+    align-items: end;
   }
-
-  button {
-    max-width: 70px;
+  .form {
+    width: 75%;
+  }
+  input {
+    display: block;
   }
 </style>
+
 <body>
-  <form action="/products" method="post">
-    <label>
-      Name
+  <form action="/product/post" method="post">
+    <div class="form">
+      <label>Name</label>
       <input type="text" name="name" id="name">
-    </label>
-    <label>
-      Price
+      <label>Price</label>
       <input type="text" name="price" id="price">
-    </label>
-    <label>
-      Stock
+      <label>Stock</label>
       <input type="text" name="stock" id="stock">
-    </label>
-    <button type="submit">Tambah</button>
+      <div class="btn"> <button type="submit">Tambah</button></div>
+    </div>
   </form>
 
   <!-- <script src="/index.js"></script> -->
 </body>
+
 </html>
