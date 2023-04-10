@@ -40,6 +40,9 @@ const postProduct = async (req, res) => {
       price,
       stock
     })
+
+    res.redirect(200, "/api/product")
+    
     res.status(201).json({
       status: 'success',
       data: newProduct

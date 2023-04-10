@@ -44,6 +44,34 @@ app.get("/api/product", async (req, res) => {
   res.render("product/create")
 })
 
+app.get("/update/product/:id", async (req, res) => {
+  // const data = await product.findAll()
+  const id = req.params.id
+  const data = await product.findByPk(id)
+
+  res.render("product/update", {
+    id,
+    data
+  })
+})
+
+app.post("/product/update/:id", async (req, res) => {
+  const { ...body } = req.body
+  const data = { ...body }
+  // console.log(data);
+  const id = req.params.id
+  const updateProduct = await product.update(data, {
+    where: {
+      id
+    }
+  })
+
+  res.status(200).json({
+    status: 'success',
+    message: `Data dengan index ${id} telah berhasil terupdate`
+  })
+})
+
 app.use(routes)
 
 app.listen(PORT, () => {
