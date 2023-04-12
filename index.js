@@ -3,6 +3,7 @@ const routes = require('./routes')
 const bodyParser = require('body-parser')
 const path = require('path')
 const {product} = require("./models")
+const { Op } = require('sequelize')
 
 const app = express()
 const PORT = 8080
@@ -31,11 +32,62 @@ app.get("/nama", async (req, res) => {
 })
 
 app.get("/product", async (req, res) => {
-  const data = await product.findAll()
-
-  res.render("product/index", {
-    data
-  })
+  try {
+    if (req.query.stock) {
+      if (req.query.filter === "kurang") {
+        if (req.query.search) {
+          const data = await product.findAll({
+            order: [["id", "Asc"]],
+            where: {
+              [Op.and]:[
+                {
+                  stock: {
+                    [Op.lte]: parseInt(req.query.stock)
+                  }
+                },
+                {
+                  name: {
+                    [Op.substring]: req.query.search
+                  }
+                }
+              ]
+            }
+          })
+    
+          res.render("product/index", {
+            data
+          })
+        }
+      } else {
+        const data = await product.findAll({
+          where: {
+            stock: {
+              [Op.gte]: parseInt(req.query.stock)
+            }
+          }
+        })
+  
+        res.render("product/index", {
+          data
+        })
+      }
+    // } else if (l) {
+      
+    } else {
+      const data = await product.findAll({
+        order: [["id", "Asc"]]
+      })
+    
+      res.render("product/index", {
+        data
+      })
+    }
+  } catch (error) {
+    res.status(400).json({
+      status: "failed",
+      message: error.message
+    })
+  }
 })
 
 app.get("/api/product", async (req, res) => {

@@ -23,6 +23,26 @@
     <a href="/api/product">
       <button>Add Product</button>
     </a>
+    <a href="/product">
+      <button>Semua</button>
+    </a>
+    <a href="/product?stock=10&filter=kurang">
+      <button>Kurang dari 10</button>
+    </a>
+    <a href="/product?stock=10&filter=lebih">
+      <button>Lebih dari 10</button>
+    </a>
+    <form action="/product" method="get">
+      <label>
+        Stock
+      </label>
+      <input type="text" name="search"><br>
+      <!-- <label>
+        Filter
+      </label>
+      <input type="text" name="filter"><br> -->
+      <button type="submit">Coba</button>
+    </form>
     <table>
       <tr>
         <th>id</th>
