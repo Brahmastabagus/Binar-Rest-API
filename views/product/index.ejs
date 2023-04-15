@@ -49,6 +49,7 @@
         <th>name</th>
         <th>price</th>
         <th>stock</th>
+        <th>image</th>
         <th>action</th>
       </tr>
       <% data.forEach((product)=> { %>
@@ -64,6 +65,9 @@
           </td>
           <td>
             <%= product.stock %>
+          </td>
+          <td>
+            <%= product.imageUrl %>
           </td>
           <td style="display: flex;justify-content: center;gap: 10px;">
             <a href="/update/product/<%= product.id %>">

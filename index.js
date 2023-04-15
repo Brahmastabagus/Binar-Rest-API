@@ -2,14 +2,17 @@ const express = require('express')
 const routes = require('./routes')
 const bodyParser = require('body-parser')
 const path = require('path')
-const {product} = require("./models")
+const { product } = require("./models")
 const { Op } = require('sequelize')
 
 const app = express()
 const PORT = 8080
 
+const imagekit = require('./lib/imagekit')
+const upload = require('./middleware/uploader')
+
 app.use(express.json());
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }))
 
 app.set("views", __dirname + "/views")
 app.set("view engine", "ejs")
@@ -39,7 +42,7 @@ app.get("/product", async (req, res) => {
           const data = await product.findAll({
             order: [["id", "Asc"]],
             where: {
-              [Op.and]:[
+              [Op.and]: [
                 {
                   stock: {
                     [Op.lte]: parseInt(req.query.stock)
@@ -53,7 +56,7 @@ app.get("/product", async (req, res) => {
               ]
             }
           })
-    
+
           res.render("product/index", {
             data
           })
@@ -66,18 +69,18 @@ app.get("/product", async (req, res) => {
             }
           }
         })
-  
+
         res.render("product/index", {
           data
         })
       }
-    // } else if (l) {
-      
+      // } else if (l) {
+
     } else {
       const data = await product.findAll({
         order: [["id", "Asc"]]
       })
-    
+
       res.render("product/index", {
         data
       })
@@ -96,15 +99,32 @@ app.get("/api/product", async (req, res) => {
   res.render("product/create")
 })
 
-app.post("/product/post", async (req, res) => {
+app.post("/product/post", upload.single('imageUrl'), async (req, res) => {
   const { name, price, stock } = req.body
-  await product.create({
-    name,
-    price,
-    stock
+  const file = req.file
+
+  // get extension file
+  const split = file.originalname.split('.');
+  const ext = split[split.length - 1];
+
+  // proses upload file ke imagekit
+  const img = await imagekit.upload({
+    file: file.buffer, // required
+    fileName: `IMG-${Date.now()}.${ext}`,
   })
 
-  res.redirect("/product")
+  const data = await product.create({
+    name,
+    price,
+    stock,
+    imageUrl: img.url
+  })
+
+  // res.redirect("/product")
+
+  res.status(201).json({
+    data
+  })
 })
 
 app.get("/update/product/:id", async (req, res) => {
@@ -128,7 +148,7 @@ app.post("/product/update/:id", async (req, res) => {
       id
     }
   })
-  
+
   res.redirect("/product")
 })
 
