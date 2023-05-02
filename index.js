@@ -138,18 +138,39 @@ app.get("/update/product/:id", async (req, res) => {
   })
 })
 
-app.post("/product/update/:id", async (req, res) => {
+app.post("/product/update/:id", upload.single('imageUrl'), async (req, res) => {
   const { ...body } = req.body
-  const data = { ...body }
+  let data = { ...body }
   // console.log(data);
   const id = req.params.id
+
+  const file = req.file
+
+  // get extension file
+  const split = file.originalname.split('.');
+  const ext = split[split.length - 1];
+
+  // proses upload file ke imagekit
+  const img = await imagekit.upload({
+    file: file.buffer, // required
+    fileName: `IMG-${Date.now()}.${ext}`,
+  })
+
+  data = {
+    ...data,
+    imgUrl: img.url
+  }
+
   const updateProduct = await product.update(data, {
     where: {
       id
     }
   })
 
-  res.redirect("/product")
+  // res.redirect("/product")
+  res.status(200).json({
+    data
+  })
 })
 
 app.get("/product/delete/:id", async (req, res) => {

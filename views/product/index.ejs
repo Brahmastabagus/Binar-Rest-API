@@ -67,9 +67,9 @@
             <%= product.stock %>
           </td>
           <td>
-            <%= product.imageUrl %>
+            <img style="width: 150px;" src="<%= product.imageUrl %>" alt="" title="">
           </td>
-          <td style="display: flex;justify-content: center;gap: 10px;">
+          <td style="display: flex;justify-content: center;gap: 10px;height: 156px;align-items: center;">
             <a href="/update/product/<%= product.id %>">
               <button>Update</button>
             </a>
