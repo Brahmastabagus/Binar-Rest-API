@@ -1,57 +1,15 @@
 const router = require('express').Router()
 
-const productController = require('../controller/productController')
-const userController = require('../controller/userController')
-const shopController = require('../controller/shopController')
+const Dashboard = require('./dashboard')
+const User = require('./user')
+const Product = require('./product')
+const Shop = require('./shop')
 
-// Product
-// GET
-router.get("/products", productController.getProduct)
+const auth = require("../middleware/auth")
 
-// GET by ID
-router.get("/products/:id", productController.getIdProduct)
-
-// POST
-router.post("/products", productController.postProduct)
-
-// PUT
-router.put('/products/:id', productController.updateProduct)
-
-// DELETE
-router.delete('/products/:id', productController.deleteProduct)
-
-
-// Users
-// GET
-router.get("/users", userController.getUsers)
-
-// GET by ID
-router.get("/users/:id", userController.getIdUser)
-
-// POST
-router.post("/users", userController.postUser)
-
-// PUT
-router.put('/users/:id', userController.updateUser)
-
-// DELETE
-router.delete('/users/:id', userController.deleteUser)
-
-
-// Shops
-// GET
-router.get("/shops", shopController.getShops)
-
-// GET by ID
-router.get("/shops/:id", shopController.getIdShops)
-
-// POST
-router.post("/shops", shopController.postShops)
-
-// PUT
-router.put('/shops/:id', shopController.updateShops)
-
-// DELETE
-router.delete('/shops/:id', shopController.deleteShops)
+router.use("/dashboard", auth, Dashboard)
+router.use("/api/v1/users", auth, User)
+router.use("/api/v1/products", auth, Product)
+router.use("/api/v1/shops", auth, Shop)
 
 module.exports = router

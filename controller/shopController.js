@@ -34,11 +34,20 @@ const getIdShops = async (req, res) => {
 
 const postShops = async (req, res) => {
   try {
-    const { name, city, userId } = req.body
+    const { name, city } = req.body
+
+    // TODO: Validasi kota harus purbalingga
+    if (city.toLowerCase() !== "purbalingga") {
+      return res.status(400).json({
+        status: 'failed',
+        message: `Kota harus Purbalingga`
+      })
+    }
+
     const newShops = await shops.create({
       name,
       city,
-      userId
+      userId: req.user.id
     })
 
     res.status(201).json({
@@ -59,7 +68,16 @@ const updateShops = async (req, res) => {
     const data = { ...body }
     // console.log(data);
     const id = req.params.id
-    const updateShops = await shops.update(data, {
+
+    // TODO: Validasi kota harus purbalingga
+    if (data.city.toLowerCase() !== "purbalingga") {
+      return res.status(400).json({
+        status: 'failed',
+        message: `Kota harus Purbalingga`
+      })
+    }
+
+    await shops.update(data, {
       where: {
         id
       }
