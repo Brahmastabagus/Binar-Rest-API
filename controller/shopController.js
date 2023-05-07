@@ -20,10 +20,17 @@ const getIdShops = async (req, res) => {
     // const { name, price, stock } = req.body
     const id = req.params.id
     const data = await shops.findByPk(id)
-    res.status(201).json({
-      status: 'success',
-      data
-    })
+    if (data !== null) {
+      res.status(200).json({
+        status: 'success',
+        data
+      })
+    } else {
+      res.status(404).json({
+        status: 'failed',
+        message: `Data dengan id ${id}, tidak ditemukan`
+      })
+    }
   } catch (err) {
     res.status(400).json({
       status: "failed",
@@ -38,7 +45,7 @@ const postShops = async (req, res) => {
 
     // TODO: Validasi kota harus purbalingga
     if (city.toLowerCase() !== "purbalingga") {
-      return res.status(400).json({
+      return res.status(409).json({
         status: 'failed',
         message: `Kota harus Purbalingga`
       })
@@ -64,14 +71,22 @@ const postShops = async (req, res) => {
 
 const updateShops = async (req, res) => {
   try {
-    const { ...body } = req.body
-    const data = { ...body }
-    // console.log(data);
+    const data = { ...req.body }
     const id = req.params.id
+
+    const dataId = await shops.findByPk(id)
+
+    // TODO: Validasi apakah id ada
+    if (dataId === null) {
+      res.status(404).json({
+        status: 'failed',
+        message: `Data dengan id ${id}, tidak ditemukan`
+      })
+    }
 
     // TODO: Validasi kota harus purbalingga
     if (data.city.toLowerCase() !== "purbalingga") {
-      return res.status(400).json({
+      return res.status(409).json({
         status: 'failed',
         message: `Kota harus Purbalingga`
       })
@@ -98,7 +113,18 @@ const deleteShops = async (req, res) => {
   try {
     // const { name, price, stock } = req.body
     const id = req.params.id
-    const deleteShops = await shops.destroy({
+
+    const dataId = await shops.findByPk(id)
+
+    // TODO: Validasi apakah id ada
+    if (dataId === null) {
+      res.status(404).json({
+        status: 'failed',
+        message: `Data dengan id ${id}, tidak ditemukan`
+      })
+    }
+
+    await shops.destroy({
       where: {
         id
       }

@@ -1,22 +1,24 @@
 const router = require('express').Router()
 const userController = require('../controller/userController')
+const auth = require('../middleware/auth')
+const checkRole = require('../middleware/checkRole')
 
 // GET
-router.get("/", userController.getUsers)
+router.get("/", auth, checkRole(["superadmin", "admin"]), userController.getUsers)
 
 // GET by ID
-router.get("/:id", userController.getIdUser)
+router.get("/:id", auth, checkRole(["superadmin", "admin"]), userController.getIdUser)
 
 // POST
-router.post("/register", userController.postUser)
+router.post("/register", auth, checkRole(["superadmin"]), userController.postUser)
 
 // LOGIN
 router.post("/login", userController.login)
 
 // PUT
-router.put('/:id', userController.updateUser)
+router.put('/:id', auth, checkRole(["superadmin"]), userController.updateUser)
 
 // DELETE
-router.delete('/:id', userController.deleteUser)
+router.delete('/:id', auth, userController.deleteUser)
 
 module.exports = router

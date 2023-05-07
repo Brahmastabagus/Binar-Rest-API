@@ -27,10 +27,19 @@ const getIdUser = async (req, res) => {
         attributes: ["name"]
       }
     })
-    res.status(201).json({
-      status: 'success',
-      data
-    })
+    
+    // TODO: Validasi apakah id ada
+    if (data !== null) {
+      res.status(200).json({
+        status: 'success',
+        data
+      })
+    } else {
+      res.status(404).json({
+        status: 'failed',
+        message: `Data dengan id ${id}, tidak ditemukan`
+      })
+    }
   } catch (err) {
     res.status(400).json({
       status: "failed",
@@ -49,17 +58,17 @@ const postUser = async (req, res) => {
 
     // Cara 1
     // const data = await users.findAll()
-    // const personName = data.find(el => el.username === username);
+    // const userName = data.find(el => el.username === username);
 
     // Cara 2
-    const personName = await users.findOne({
+    const userName = await users.findOne({
       where: {
         username
       }
     })
 
-    if (personName !== null) {
-      return res.status(400).json({
+    if (userName !== null) {
+      return res.status(404).json({
         status: 'failed',
         message: `username ${username} sudah ada`
       })
@@ -73,7 +82,7 @@ const postUser = async (req, res) => {
     })
 
     res.status(201).json({
-      status: 'success',
+      status: `Anda berhasil register sebagai ${role}`,
       data: newUsers
     })
   } catch (error) {
@@ -86,24 +95,44 @@ const postUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const { ...body } = req.body
-    const data = { ...body }
+    const data = { ...req.body }
     const id = req.params.id
 
-    const personName = await users.findOne({
+    const dataId = await users.findByPk(id)
+
+    // TODO: Validasi apakah id ada
+    if (dataId === null) {
+      res.status(404).json({
+        status: 'failed',
+        message: `Data dengan id ${id}, tidak ditemukan`
+      })
+    }
+
+    const hashPassword = bcrypt.hashSync(data.password, 10)
+
+    const userName = await users.findOne({
       where: {
         username: data.username
       }
     })
+    const userId = await users.findOne({
+      where: {
+        id
+      }
+    })
 
-    if (personName !== null) {
+    // TODO: Validasi apakah username sudah ada
+    if (userName !== null && userName === userId) {
       return res.status(400).json({
         status: 'failed',
         message: `username ${data.username} sudah ada`
       })
     }
 
-    await users.update(data, {
+    await users.update({
+      ...data,
+      password: hashPassword
+    }, {
       where: {
         id
       }
@@ -124,7 +153,18 @@ const deleteUser = async (req, res) => {
   try {
     // const { name, price, stock } = req.body
     const id = req.params.id
-    const deleteUser = await users.destroy({
+
+    const dataId = await shops.findByPk(id)
+
+    // TODO: Validasi apakah id ada
+    if (dataId === null) {
+      res.status(404).json({
+        status: 'failed',
+        message: `Data dengan id ${id}, tidak ditemukan`
+      })
+    }
+
+    await users.destroy({
       where: {
         id
       }
@@ -168,7 +208,7 @@ const login = async (req, res) => {
       // minimal password
   
       res.status(200).json({
-        status: 'success',
+        status: `Anda berhasil login sebagai ${user.role}`,
         data: {
           user,
           token

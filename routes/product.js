@@ -2,6 +2,9 @@ const router = require('express').Router()
 const productController = require('../controller/productController')
 const upload = require('../middleware/uploader')
 
+// GET
+router.get("/", productController.getProduct)
+
 // GET by ID
 router.get("/:id", productController.getIdProduct)
 
